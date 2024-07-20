@@ -76,7 +76,7 @@ export class Player extends Units{
 
 }
 
-export class Google extends Units{
+export class Google extends Units{if
     constructor(position) {
         super(position)
     }
