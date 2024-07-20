@@ -49,10 +49,6 @@ describe('Game test', () => {
             expect([1, 2, 3, 4, 5]).toContain(game.player2.position.y)
 
         }
-
-
-
-
     });
 
 });
