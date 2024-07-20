@@ -38,8 +38,9 @@ export class Game {
     start() {
         if (this.#status === 'pending') {
             this.#status = 'in-progress'
+            this.#createUnits()
         }
-        this.#createUnits()
+
     }
 
     set settings(settings) {
@@ -73,10 +74,9 @@ export class Player extends Units{
         super(position)
         this.id = id
     }
-
 }
 
-export class Google extends Units{if
+export class Google extends Units{
     constructor(position) {
         super(position)
     }

@@ -10,13 +10,13 @@ export class Game {
     #player2;
     #google;
 
-    getRandomPosition(coordinates = []) {
+    #getRandomPosition(coordinates = []) {
         let newX = null
         let newY = null
 
         do {
             newX = NumberUtils.randomNumber(this.#settings.gridSize.columns)
-            newY = NumberUtils.randomNumber(this.#settings.gridSize.columns)
+            newY = NumberUtils.randomNumber(this.#settings.gridSize.rows)
         }
         while (
             coordinates.some(pos => pos.x === newX && pos.y === newY)
@@ -24,35 +24,52 @@ export class Game {
         return new Position(newX, newY)
     }
 
-    createUnits() {
-        this.#player1 = Player(1, Position(NumberUtils.randomNumber(),))
+    #createUnits() {
+
+        const pos1 = this.#getRandomPosition()
+        this.#player1 = new Player(1, pos1)
+        //console.log(this.#player1)
+
+        const pos2 = this.#getRandomPosition([pos1])
+        this.#player2 = new Player(2, pos2)
+
+        //console.log(this.#player2)
+
+        const pos3 = this.#getRandomPosition([pos1, pos2])
+        this.#google = new Google(pos3)
 
     }
 
     start() {
-        if (this.#status !== 'pending') {
-            this.#status = "in-progress";
+        if (this.#status === 'pending') {
+            this.#status = "in-progress"
+            this.#createUnits()
         }
-        this.#createUnits()
+
     }
 
+
+    set settings(settings) {
+        this.#settings = settings
+    }
 
     get settings() {
         return this.#settings
     }
 
-    set settings(settings) {
-        this.#settings = settings
-
-    }
-
     get status() {
         return this.#status
     }
-
-    set status(status) {
-        this.#status = status
+    get player1() {
+        return this.#player1
     }
+    get player2() {
+        return this.#player2
+    }
+    get google() {
+        return this.#google
+    }
+
 }
 
 class Units {
@@ -65,6 +82,12 @@ class Player extends Units {
     constructor(id, position) {
         super(position);
         this.id = id
+    }
+}
+
+class Google extends Units {
+    constructor(position) {
+        super(position);
     }
 }
 
