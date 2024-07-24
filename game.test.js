@@ -1,7 +1,16 @@
-import {Game} from "./game";
+import {Game, Position} from "./game";
+
+
 
 describe('Game test', () => {
 
+    let game = new Game()
+    beforeEach(() => {
+        game = new Game()
+    })
+    afterEach(() => {
+        game.stop()
+    })
     it('should return grid size', function () {
         const game = new Game()
         game.settings = {
@@ -17,7 +26,7 @@ describe('Game test', () => {
         expect(settings.gridSize.columns).toBe(5)
     });
     it('should shange status', function () {
-        const game = new Game()
+        game = new Game()
         game.settings = {
             gridSize: {
                 columns: 5,
@@ -34,8 +43,8 @@ describe('Game test', () => {
 
     it('should unit have uniq pos', function () {
 
-        for(let i = 0; i< 5; i++){
-            const game = new Game()
+        for (let i = 0; i < 5; i++) {
+            game = new Game()
             game.settings = {
                 gridSize: {
                     columns: 5,
@@ -50,5 +59,26 @@ describe('Game test', () => {
 
         }
     });
+    it('should google change position', async () => {
+        for (let i = 0; i < 5; i++) {
+            game = new Game();
+            game.settings = {
+                gridSize: {
+                    columns: 5,
+                    rows: 5
+                },
+                googleJumpInterval: 100,
+            }
+            game.start()
+            const prevPosition = game.google.position.copy()
+            await sleep(150)
+            expect(prevPosition.equal(game.google.position)).toBe(false)
+            game.stop()
+
+        }
+    })
+    const sleep = (delay) => {
+        return new Promise(res => setTimeout(res, delay))
+    }
 
 });
