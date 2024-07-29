@@ -11,158 +11,182 @@ export class Game {
     #player2;
     #google;
     #googleJumpIntervalId;
+    #score = {
+        1: {points: 0},
+        2: {points: 0},
+    }
 
     #getRandomPosition(takenPosition = []) {
         let newX;
         let newY;
 
-
         do {
-            newX = NumberUtil.getRandomNumber(this.#settings.gridSize.columns,)
-            newY = NumberUtil.getRandomNumber(this.#settings.gridSize.rows)
-        } while (
-            takenPosition.some(position => position.x === newX && position.y === newY))
+            newX = NumberUtil.getRandomNumber(this.#settings.gridSize.columns);
+            newY = NumberUtil.getRandomNumber(this.#settings.gridSize.rows);
+        } while (takenPosition.some(position => position.x === newX && position.y === newY));
 
-        return new Position(newX, newY)
+        return new Position(newX, newY);
     }
 
     #moveGoogleToRandomPosition(isStartPosition) {
         const googlePosition = isStartPosition
             ? this.#getRandomPosition([this.#player1.position, this.#player2.position])
-            : this.#getRandomPosition([this.#player1.position, this.#player2.position, this.#google.position])
-        this.#google = new Google(googlePosition)
+            : this.#getRandomPosition([this.#player1.position, this.#player2.position, this.#google.position]);
+        this.#google = new Google(googlePosition);
     }
 
     #createUnits() {
-        const player1position = this.#getRandomPosition([])
-        this.#player1 = new Player(1, player1position)
+        const player1position = this.#getRandomPosition([]);
+        this.#player1 = new Player(1, player1position);
 
-        const player2position = this.#getRandomPosition([player1position])
-        this.#player2 = new Player(2, player2position)
+        const player2position = this.#getRandomPosition([player1position]);
+        this.#player2 = new Player(2, player2position);
 
-        this.#moveGoogleToRandomPosition(true)
+        this.#moveGoogleToRandomPosition(true);
     }
 
     start() {
         if (this.#status === 'pending') {
-            this.#status = 'in-progress'
-            this.#createUnits()
+            this.#status = 'in-progress';
+            this.#createUnits();
             this.#googleJumpIntervalId = setInterval(() => {
-                this.#moveGoogleToRandomPosition(false)
-            }, this.#settings.googleJumpInterval)
+                this.#moveGoogleToRandomPosition(false);
+            }, this.#settings.googleJumpInterval);
         }
-
     }
 
     stop() {
-        this.#status === 'finished'
-        clearInterval(this.#googleJumpIntervalId)
+        this.#status = 'finished';
+        clearInterval(this.#googleJumpIntervalId);
     }
 
     #isBorder(movingPlayer, step) {
-        let prevPlayer1Position = movingPlayer.position.copy()
+        let prevPlayerPosition = movingPlayer.position.copy();
+
         if (step.x) {
-            prevPlayer1Position += step.x
-            return prevPlayer1Position.x < 1 || prevPlayer1Position > this.#settings.gridSize.columns
+            prevPlayerPosition.x += step.x;
+            return prevPlayerPosition.x < 1 || prevPlayerPosition.x > this.#settings.gridSize.columns;
         }
         if (step.y) {
-            prevPlayer1Position += step.y
-            return prevPlayer1Position.y < 1 || prevPlayer1Position > this.#settings.gridSize.rows
+            prevPlayerPosition.y += step.y;
+            return prevPlayerPosition.y < 1 || prevPlayerPosition.y > this.#settings.gridSize.rows;
         }
-
     }
 
     #isOtherPlayer(movingPlayer, otherPlayer, step) {
-        let prevPlayer1Position = movingPlayer.position.copy()
+        let prevPlayerPosition = movingPlayer.position.copy();
         if (step.x) {
-            prevPlayer1Position += step.x
-
+            prevPlayerPosition.x += step.x;
         }
         if (step.y) {
-            prevPlayer1Position += step.y
+            prevPlayerPosition.y += step.y;
         }
-        return prevPlayer1Position.equal(otherPlayer.position)
+        return prevPlayerPosition.equal(otherPlayer.position);
     }
 
     #checkGoogleCatching(movingPlayer) {
         if (movingPlayer.position.equal(this.#google.position)) {
-            this.#score[movingPlayer[id]].points++
-
+            this.#score[movingPlayer.id].points++;
         }
-        this.#moveGoogleToRandomPosition(false)
-
+        if(this.#score[movingPlayer.id].points === this.#settings.pointsToWin){
+            this.stop()
+            this.#google = new Google(new Position(0, 0))
+        }
+        this.#moveGoogleToRandomPosition(false);
     }
 
-    #movePlayer() {
-
+    #movePlayer(movingPlayer, otherPlayer, step) {
+        const isBorder = this.#isBorder(movingPlayer, step);
+        const isOtherPlayer = this.#isOtherPlayer(movingPlayer, otherPlayer, step);
+        if (isBorder || isOtherPlayer) {
+            return;
+        }
+        if (step.x) {
+            movingPlayer.position.x += step.x;
+        }
+        if (step.y) {
+            movingPlayer.position.y += step.y;
+        }
+        this.#checkGoogleCatching(movingPlayer);
     }
 
     movePlayer1Right() {
-        const step = {x: 1}
-        if (this.#isBorder(this.#player1, step)) {
-            return
-        }
-        if (this.#isOtherPlayer(this.#player1, this.#player2, step)) {
-            return
-        }
-        this.#player1.position.x++
-        this.#checkGoogleCatching(this.#player1)
-
+        this.#movePlayer(this.#player1, this.#player2, {x: 1});
     }
 
     movePlayer1Left() {
-        const step = {x: -1}
+        this.#movePlayer(this.#player1, this.#player2, {x: -1});
     }
 
     movePlayer1Up() {
-        const step = {y: 1}
+        this.#movePlayer(this.#player1, this.#player2, {y: -1});
     }
 
     movePlayer1Down() {
-        const step = {y: -1}
+        this.#movePlayer(this.#player1, this.#player2, {y: 1});
+    }
+
+    movePlayer2Right() {
+        this.#movePlayer(this.#player2, this.#player1, {x: 1});
+    }
+
+    movePlayer2Left() {
+        this.#movePlayer(this.#player2, this.#player1, {x: -1});
+    }
+
+    movePlayer2Up() {
+        this.#movePlayer(this.#player2, this.#player1, {y: -1});
+    }
+
+    movePlayer2Down() {
+        this.#movePlayer(this.#player2, this.#player1, {y: 1});
     }
 
     set settings(settings) {
-        this.#settings = settings
+        this.#settings = settings;
     }
 
     get settings() {
-        return this.#settings
+        return this.#settings;
     }
 
     get status() {
-        return this.#status
+        return this.#status;
     }
 
     get player1() {
-        return this.#player1
+        return this.#player1;
     }
 
     get player2() {
-        return this.#player2
+        return this.#player2;
     }
 
     get google() {
-        return this.#google
+        return this.#google;
+    }
+
+    get score() {
+        return this.#score;
     }
 }
 
 export class Units {
     constructor(position) {
-        this.position = position
+        this.position = position;
     }
 }
 
 export class Player extends Units {
     constructor(id, position) {
-        super(position)
-        this.id = id
+        super(position);
+        this.id = id;
     }
 }
 
 export class Google extends Units {
     constructor(position) {
-        super(position)
+        super(position);
     }
 }
 
@@ -173,17 +197,16 @@ export class Position {
     }
 
     copy() {
-        return new Position(this.x, this.y)
+        return new Position(this.x, this.y);
     }
 
     equal(somePosition) {
-        return somePosition.x === this.x && somePosition.y === this.y
+        return somePosition.x === this.x && somePosition.y === this.y;
     }
-
 }
 
 export class NumberUtil {
     static getRandomNumber(max) {
-        return Math.floor(Math.random() * max + 1)
+        return Math.floor(Math.random() * max + 1);
     }
 }
