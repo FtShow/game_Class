@@ -1,3 +1,4 @@
+
 export class Game {
     #settings = {
         gridSize: {
@@ -14,6 +15,10 @@ export class Game {
     #score = {
         1: {points: 0},
         2: {points: 0},
+    }
+
+    constructor(eventEmmiter) {
+        this.eventEmmiter = eventEmmiter
     }
 
     #getRandomPosition(takenPosition = []) {
@@ -33,6 +38,7 @@ export class Game {
             ? this.#getRandomPosition([this.#player1.position, this.#player2.position])
             : this.#getRandomPosition([this.#player1.position, this.#player2.position, this.#google.position]);
         this.#google = new Google(googlePosition);
+        this.eventEmmiter.emit("changePosition")
     }
 
     #createUnits() {
@@ -88,7 +94,7 @@ export class Game {
         if (movingPlayer.position.equal(this.#google.position)) {
             this.#score[movingPlayer.id].points++;
         }
-        if(this.#score[movingPlayer.id].points === this.#settings.pointsToWin){
+        if (this.#score[movingPlayer.id].points === this.#settings.pointsToWin) {
             this.stop()
             this.#google = new Google(new Position(0, 0))
         }
@@ -108,6 +114,7 @@ export class Game {
             movingPlayer.position.y += step.y;
         }
         this.#checkGoogleCatching(movingPlayer);
+        this.eventEmmiter.emit('changePosition')
     }
 
     movePlayer1Right() {
