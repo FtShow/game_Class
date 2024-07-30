@@ -93,12 +93,13 @@ export class Game {
     #checkGoogleCatching(movingPlayer) {
         if (movingPlayer.position.equal(this.#google.position)) {
             this.#score[movingPlayer.id].points++;
+            this.#moveGoogleToRandomPosition(false);
         }
         if (this.#score[movingPlayer.id].points === this.#settings.pointsToWin) {
             this.stop()
             this.#google = new Google(new Position(0, 0))
         }
-        this.#moveGoogleToRandomPosition(false);
+
     }
 
     #movePlayer(movingPlayer, otherPlayer, step) {
