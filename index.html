@@ -10,7 +10,7 @@
     <style>
         main {
             height: 100vh;
-            background-color: rgba(0, 255, 255, 0.34);
+            background-image: url("./assets/bg.png");
             background-repeat: no-repeat;
             background-size: cover;
             display: flex;
@@ -19,23 +19,9 @@
             row-gap: 15%;
             padding-top: 10%;
         }
-
-        td {
-            width: 75px;
-            height: 75px;
-            margin: 3px 4px;
-            border: 2px solid #999B95;
-            background-color: #6E75664D;;
-            display: inline-flex;
-            align-items: center;
-            border-radius: 8px;
-        }
-        .scoreBlock{
+        div.scoreBlock {
             height: 80px;
             width: 80%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             padding: 15px;
             column-gap: 40px;
             font-size: 20px;
@@ -44,15 +30,32 @@
             background-color: #393D3766;
             border-radius: 50px;
         }
-        .scorePlayer{
+        .scorePlayer, .scoreBlock {
             display: flex;
             align-items: center;
             justify-content: center;
             column-gap: 10px;
         }
-        .scorePlayer img{
-            width: 30px;
-            height: 30px;
+
+        .scorePlayer img {
+            width: 40px;
+            height: 40px;
+        }
+
+        td {
+            width: 75px;
+            height: 75px;
+            margin: 3px 4px;
+            border: 2px solid #999B95;
+            background-color: #6E75664D;
+            border-radius: 8px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+        }
+        img {
+            width: 55px;
+            height: 55px;
         }
     </style>
 </head>
@@ -60,11 +63,11 @@
 <main>
     <div class="scoreBlock">
         <div class="scorePlayer">
-            <img src="" alt="">
+            <img src="./assets/first.png" alt="player image">
             <span>Player 1: <span id="score1">0</span></span>
         </div>
-        <div>
-            <img src="" alt="">
+        <div class="scorePlayer">
+            <img src="./assets/second.png" alt="player image">
             <span>Player 1: <span id="score2">0</span></span>
         </div>
     </div>

@@ -6,6 +6,7 @@ export class Game {
             rows: 5
         },
         googleJumpInterval: 2000,
+        pointsToWin: 3
     };
     #status = 'pending';
     #player1;
