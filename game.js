@@ -219,3 +219,9 @@ export class NumberUtil {
         return Math.floor(Math.random() * max + 1);
     }
 }
+class B {
+    create(type){
+        if(type === 'A')
+            return new String('asaasas')
+    }
+}
